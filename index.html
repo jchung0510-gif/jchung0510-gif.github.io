@@ -495,6 +495,38 @@
         padding:0 14px;min-height:44px;
       }
       .edit-reset:hover{color:var(--ink);border-color:var(--brass)}
+      .edit-list-btn{
+        background:none;border:1px solid var(--brass);color:var(--brass-2);
+        font-family:var(--mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;
+        padding:0 14px;min-height:44px;
+      }
+      .edit-list-btn:hover{background:rgba(194,160,89,.14);color:var(--ink)}
+      body:not(.editing) [data-sellist]{display:none}
+
+      /* ---------- selection list panel — the owner's checks as copyable text ---------- */
+      .slpanel{
+        position:fixed;inset:0;z-index:118;background:rgba(6,7,8,.96);backdrop-filter:blur(8px);
+        display:none;flex-direction:column;
+      }
+      .slpanel.open{display:flex}
+      .sl-body{flex:1;overflow-y:auto;min-height:0;padding:22px var(--pad) 34px}
+      .sl-in{max-width:860px;margin:0 auto}
+      .sl-note{color:var(--ink-2);font-weight:300;font-size:15px;margin:0;max-width:62ch}
+      .sl-counts{font-family:var(--mono);font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--brass-2);margin:16px 0 0}
+      .sl-actions{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 0}
+      .sl-copy{
+        background:var(--yolk);border:1px solid var(--yolk);color:#111;
+        font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+        padding:0 18px;min-height:48px;
+      }
+      .sl-copy.alt{background:none;color:var(--ink-2);border-color:var(--line-2)}
+      .sl-copy.alt:hover{color:var(--ink);border-color:var(--brass)}
+      .sl-status{font-family:var(--mono);font-size:11.5px;letter-spacing:.08em;color:var(--mut);margin:12px 0 0;min-height:18px}
+      .sl-text{
+        width:100%;margin:14px 0 0;background:var(--bg-2);border:1px solid var(--line-2);color:var(--ink);
+        font-family:var(--mono);font-size:13px;line-height:1.75;letter-spacing:.02em;
+        padding:16px;border-radius:0;resize:vertical;
+      }
 
       /* ---------- gallery — on trucks ---------- */
       .truck-sec{border-top:1px solid var(--line);padding:clamp(56px,7vw,96px) 0 clamp(64px,7vw,100px)}
@@ -865,6 +897,7 @@
         <div class="editbar"><div class="wrap editbar-in">
           <button type="button" class="edit-toggle" id="patEditToggle" aria-pressed="false">포트폴리오 편집 · Edit Selection</button>
           <span class="edit-status" id="patEditStatus" role="status"></span>
+          <button type="button" class="edit-list-btn" data-sellist>선택 목록 · Selection List</button>
           <button type="button" class="edit-reset" id="patEditReset" hidden>모두 포함 · Include All</button>
         </div></div>
         <div class="wrap"><div class="grid-sec">
@@ -911,6 +944,25 @@
         </div>
       </div>
     </footer>
+
+    <!-- ================= SELECTION LIST PANEL ================= -->
+    <div class="slpanel" id="selListPanel" role="dialog" aria-modal="true" aria-label="Selection list">
+      <div class="lb-top">
+        <div class="lb-name">선택 목록 · Selection List</div>
+        <button class="lb-x" id="selListClose" aria-label="Close selection list">✕</button>
+      </div>
+      <div class="sl-body"><div class="sl-in">
+        <p class="sl-note">체크 안 한 디자인(=뺄 디자인)과 체크한 디자인(=남길 디자인)을 브랜드별로 모델 코드 목록으로 정리한 글자입니다. 복사해서 그대로 보내 주세요. 복사가 안 되는 브라우저에서는 아래 글자를 길게 눌러 복사할 수 있습니다.</p>
+        <p class="sl-counts" id="selListCounts"></p>
+        <div class="sl-actions">
+          <button type="button" class="sl-copy" id="selListCopyAll">전체 목록 복사 · Copy All</button>
+          <button type="button" class="sl-copy alt" id="selListCopyRemove">뺄 목록만 복사 · Copy Remove List</button>
+          <button type="button" class="sl-copy alt" id="selListRefresh">새로고침 · Refresh</button>
+        </div>
+        <p class="sl-status" id="selListStatus" role="status"></p>
+        <textarea class="sl-text" id="selListText" readonly rows="20" aria-label="Selection list as text"></textarea>
+      </div></div>
+    </div>
 
     <!-- ================= LIGHTBOX ================= -->
     <div class="lb" id="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer">
@@ -1788,6 +1840,7 @@ window.WP_DATA = {"brands":[{"id":"niche","code":"NICHE","name":"1-Piece","desc"
           + "<div class=\"editbar\"><div class=\"wrap editbar-in\">"
           + "<button type=\"button\" class=\"edit-toggle\" id=\"editToggle\" aria-pressed=\"false\">포트폴리오 편집 · Edit Selection</button>"
           + "<span class=\"edit-status\" id=\"editStatus\" role=\"status\"></span>"
+          + "<button type=\"button\" class=\"edit-list-btn\" data-sellist>선택 목록 · Selection List</button>"
           + "<button type=\"button\" class=\"edit-reset\" id=\"editReset\" hidden>모두 포함 · Include All</button>"
           + "</div></div>"
           + "<nav class=\"series-nav\" aria-label=\"Wheel series\"><div class=\"wrap\">"+chips+"</div></nav>"
@@ -1964,6 +2017,7 @@ window.WP_DATA = {"brands":[{"id":"niche","code":"NICHE","name":"1-Piece","desc"
           + "<div class=\"editbar\"><div class=\"wrap editbar-in\">"
           + "<button type=\"button\" class=\"edit-toggle\" id=\"wpEditToggle\" aria-pressed=\"false\">포트폴리오 편집 · Edit Selection</button>"
           + "<span class=\"edit-status\" id=\"wpEditStatus\" role=\"status\"></span>"
+          + "<button type=\"button\" class=\"edit-list-btn\" data-sellist>선택 목록 · Selection List</button>"
           + "<button type=\"button\" class=\"edit-reset\" id=\"wpEditReset\" hidden>모두 포함 · Include All</button>"
           + "</div></div>"
           + "<nav class=\"series-nav\" aria-label=\"Wheel brands\"><div class=\"wrap\">"+chips+"</div></nav>"
@@ -2130,6 +2184,7 @@ window.WP_DATA = {"brands":[{"id":"niche","code":"NICHE","name":"1-Piece","desc"
           + "<div class=\"editbar\"><div class=\"wrap editbar-in\">"
           + "<button type=\"button\" class=\"edit-toggle\" data-bpedit aria-pressed=\"false\">포트폴리오 편집 · Edit Selection</button>"
           + "<span class=\"edit-status\" data-bpstatus role=\"status\"></span>"
+          + "<button type=\"button\" class=\"edit-list-btn\" data-sellist>선택 목록 · Selection List</button>"
           + "<button type=\"button\" class=\"edit-reset\" data-bpreset hidden>모두 포함 · Include All</button>"
           + "</div></div>"
           + "<nav class=\"series-nav\" aria-label=\"Wheel series\"><div class=\"wrap\">"+chips+"</div></nav>"
@@ -2756,6 +2811,184 @@ window.WP_DATA = {"brands":[{"id":"niche","code":"NICHE","name":"1-Piece","desc"
         }
         lbOpenItems(items, 0);
       });
+
+      /* ---------- selection list — the owner's checks as one copyable text ----------
+         Read-only companion to the edit mode above: it never writes to
+         localStorage and never changes a key or a stored value. It reads
+         the exact same per-brand keys the checkboxes already save
+         (unchecked designs are the stored "excluded" keys) and lists them
+         as model codes grouped by brand, so the owner can copy the whole
+         list and send it in one message instead of screenshots. Catalogs
+         are rebuilt from the source data on every open, so the list is
+         complete even for brand pages not visited yet in this session. */
+      var slPanel = document.getElementById("selListPanel"),
+          slTextEl = document.getElementById("selListText"),
+          slCountsEl = document.getElementById("selListCounts"),
+          slStatusEl = document.getElementById("selListStatus"),
+          slLastFocus = null, slRemoveText = "", slFullText = "";
+      function slReadExcluded(key){
+        try {
+          var a = JSON.parse(localStorage.getItem(key) || "[]");
+          return Array.isArray(a) ? a : [];
+        } catch(e){ return []; }
+      }
+      function slForCatalog(){
+        var bySeries = {};
+        FOR_SERIES.forEach(function(s){ bySeries[s.id] = []; });
+        ((DATA.collections || {})["fittipaldi-offroad"] || []).forEach(function(it){
+          var sid = forSeriesOf(it);
+          if (sid && bySeries[sid]) bySeries[sid].push(it);
+        });
+        var out = [];
+        FOR_SERIES.forEach(function(s){
+          groupDesigns(bySeries[s.id]).forEach(function(d){
+            var label = d.code;
+            if (s.id === "ftf-black"){
+              var skus = [];
+              d.items.forEach(function(it){ if (skus.indexOf(it.name) === -1) skus.push(it.name); });
+              label = skus.join(" / ");
+            }
+            out.push({key: s.id + ":" + label, disp: label});
+          });
+        });
+        return out;
+      }
+      function slBpCatalog(cfg){
+        var out = [];
+        (cfg.sections || []).forEach(function(s){
+          (s.designs || []).forEach(function(dd){
+            out.push({key: s.id + ":" + dd.code, disp: dd.code});
+          });
+        });
+        return out;
+      }
+      function slWpCatalog(){
+        var out = [];
+        WP_BRANDS.forEach(function(b){
+          (b.designs || []).forEach(function(dd){
+            var lbl = dd.name || dd.code;
+            out.push({key: b.id + ":" + lbl, disp: dd.code ? (dd.code + " (" + lbl + ")") : lbl});
+          });
+        });
+        return out;
+      }
+      function slPatCatalog(){
+        return (window.PATENT_INDEX || []).map(function(r){
+          return {key: "usd" + r[0], disp: fmtPatNo(r[0])};
+        });
+      }
+      function slBrand(label, catalog, excludedKeys, staleDisp){
+        var exSet = {};
+        excludedKeys.forEach(function(k){ exSet[k] = true; });
+        var seen = {}, remove = [], keep = [];
+        catalog.forEach(function(e){
+          seen[e.key] = true;
+          if (exSet[e.key]) remove.push(e.disp); else keep.push(e.disp);
+        });
+        /* A stored key with no matching catalog entry still belongs in
+           the remove list — never drop one of her checks silently. */
+        excludedKeys.forEach(function(k){
+          if (seen[k]) return;
+          remove.push(staleDisp ? staleDisp(k) : (k.split(":").slice(1).join(":") || k));
+        });
+        return {label: label, remove: remove, keep: keep};
+      }
+      function slBrands(){
+        var brands = [];
+        brands.push(slBrand("Fittipaldi Off Road", slForCatalog(), slReadExcluded(SEL_KEY)));
+        var bpByPage = {};
+        ((window.BP_DATA && window.BP_DATA.brands) || []).forEach(function(cfg){ bpByPage[cfg.page] = cfg; });
+        ["fittipaldi", "gear", "motiv"].forEach(function(pg){
+          var cfg = bpByPage[pg];
+          if (cfg) brands.push(slBrand(cfg.label, slBpCatalog(cfg), slReadExcluded(cfg.selKey)));
+        });
+        brands.push(slBrand("Wheel Pros", slWpCatalog(), slReadExcluded(WP_SEL_KEY)));
+        brands.push(slBrand("Pattern Drawings · 특허", slPatCatalog(), slReadExcluded(PAT_SEL_KEY), function(k){
+          return /^usd\d+$/.test(k) ? fmtPatNo(k.slice(3)) : k;
+        }));
+        return brands;
+      }
+      function slSectionText(title, brands, which){
+        var total = 0;
+        var lines = brands.map(function(b){
+          total += b[which].length;
+          return b.label + " (" + b[which].length + "개): " + (b[which].length ? b[which].join(", ") : "없음");
+        });
+        return {total: total, text: title + " — 총 " + total + "개\n" + lines.join("\n")};
+      }
+      function slBuildTexts(){
+        var brands = slBrands();
+        var rem = slSectionText("■ 뺄 디자인 (체크 안 함 · Remove)", brands, "remove");
+        var kep = slSectionText("■ 남길 디자인 (체크함 · Keep)", brands, "keep");
+        var now = new Date();
+        var dateStr = now.getFullYear() + "-" + String(now.getMonth() + 1).padStart(2, "0") + "-" + String(now.getDate()).padStart(2, "0");
+        var head = "Jenny Chung Portfolio — 선택 목록 · Selection List\n날짜 · Date: " + dateStr + "\n체크함 = 남길 디자인 · 체크 안 함 = 뺄 디자인";
+        slRemoveText = head + "\n\n" + rem.text;
+        slFullText = slRemoveText + "\n\n" + kep.text;
+        if (slCountsEl) slCountsEl.textContent = "뺄 디자인 " + rem.total + "개 · 남길 디자인 " + kep.total + "개";
+        if (slTextEl) slTextEl.value = slFullText;
+      }
+      function slCopyText(text, doneMsg){
+        function ok(){ if (slStatusEl) slStatusEl.textContent = doneMsg; }
+        function fail(){
+          if (slStatusEl) slStatusEl.textContent = "자동 복사가 안 되는 브라우저입니다. 아래 글자를 길게 눌러 복사해 주세요. · Long-press the text below to copy.";
+          if (slTextEl){ slTextEl.focus(); slTextEl.select(); }
+        }
+        if (navigator.clipboard && navigator.clipboard.writeText){
+          navigator.clipboard.writeText(text).then(ok, function(){
+            if (!slLegacyCopy(text)) fail(); else ok();
+          });
+        } else if (!slLegacyCopy(text)) fail(); else ok();
+      }
+      function slLegacyCopy(text){
+        try {
+          var ta = document.createElement("textarea");
+          ta.value = text;
+          ta.setAttribute("readonly", "");
+          ta.style.position = "fixed"; ta.style.opacity = "0";
+          document.body.appendChild(ta);
+          ta.select();
+          var done = document.execCommand && document.execCommand("copy");
+          document.body.removeChild(ta);
+          return !!done;
+        } catch(e){ return false; }
+      }
+      function slOpenPanel(){
+        if (!slPanel) return;
+        slBuildTexts();
+        if (slStatusEl) slStatusEl.textContent = "";
+        slLastFocus = document.activeElement;
+        slPanel.classList.add("open");
+        document.body.style.overflow = "hidden";
+        document.getElementById("selListClose").focus();
+      }
+      function slClosePanel(){
+        if (!slPanel) return;
+        slPanel.classList.remove("open");
+        document.body.style.overflow = "";
+        if (slLastFocus) slLastFocus.focus();
+      }
+      document.addEventListener("click", function(e){
+        var b = e.target.closest ? e.target.closest("[data-sellist]") : null;
+        if (b){ slOpenPanel(); }
+      });
+      if (slPanel){
+        document.getElementById("selListClose").addEventListener("click", slClosePanel);
+        document.getElementById("selListCopyAll").addEventListener("click", function(){
+          slCopyText(slFullText, "전체 목록이 복사됐습니다. · Full list copied.");
+        });
+        document.getElementById("selListCopyRemove").addEventListener("click", function(){
+          slCopyText(slRemoveText, "뺄 목록이 복사됐습니다. · Remove list copied.");
+        });
+        document.getElementById("selListRefresh").addEventListener("click", function(){
+          slBuildTexts();
+          if (slStatusEl) slStatusEl.textContent = "목록을 새로 불러왔습니다. · List refreshed.";
+        });
+        slPanel.addEventListener("click", function(e){ if (e.target === slPanel) slClosePanel(); });
+        document.addEventListener("keydown", function(e){
+          if (slPanel.classList.contains("open") && e.key === "Escape") slClosePanel();
+        });
+      }
 
       /* ---------- router ---------- */
       var PAGES = ["home", "fittipaldi-offroad", "wheelpros", "motiv", "fittipaldi", "gear", "patterns"];
