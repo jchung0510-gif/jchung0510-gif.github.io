@@ -244,6 +244,27 @@
       .c-list .k{font-family:var(--mono);font-size:10.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--mut);display:block;margin-bottom:5px}
       .c-list a,.c-list .v{font-size:18px;font-weight:600;text-decoration:none;color:var(--ink)}
       .c-list a:hover{color:var(--brass-2)}
+      /* Contact is always visible — it never waits on the scroll-reveal,
+         which left this whole band blank when the observer stalled. */
+      .contact-band .rv{opacity:1;transform:none;transition:none}
+      /* The email address itself is the main contact action: set large,
+         underlined and high-contrast so it reads as tappable at a glance,
+         with a tall tap target. Tapping opens the visitor's mail app
+         with the address filled in (mailto). */
+      .contact-email{
+        display:block;margin:24px 0 0;padding:12px 0;min-height:56px;
+        font-size:clamp(26px,3.8vw,40px);font-weight:800;line-height:1.3;letter-spacing:.01em;
+        color:var(--brass-2);text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:7px;
+        word-break:break-all;
+      }
+      .contact-email:hover{color:var(--ink)}
+      .c-list a.c-email{
+        display:inline-block;padding:8px 0;min-height:44px;line-height:1.35;
+        font-size:clamp(20px,2.2vw,24px);font-weight:800;color:var(--brass-2);
+        text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:5px;
+        word-break:break-all;
+      }
+      .c-list a.c-email:hover{color:var(--ink)}
       .btn{
         display:inline-flex;align-items:center;gap:10px;margin-top:28px;min-height:52px;padding:0 26px;
         background:var(--brass);color:#141310;text-decoration:none;font-weight:700;font-size:14px;letter-spacing:.1em;text-transform:uppercase;
@@ -380,7 +401,7 @@
       .foot-links a:hover{color:var(--ink)}
       .foot-contact{list-style:none;margin:0;padding:0;font-size:14.5px;color:var(--ink-2)}
       .foot-contact li{margin-bottom:10px}
-      .foot-contact a{color:var(--ink);text-decoration:none;font-weight:600}
+      .foot-contact a{color:var(--ink);text-decoration:underline;text-underline-offset:4px;font-weight:700;font-size:16.5px;display:inline-block;padding:6px 0}
       .foot-contact a:hover{color:var(--brass-2)}
       .foot-base{border-top:1px solid var(--line);padding:20px 0 26px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--mut)}
       @media (max-width:820px){.foot-grid{grid-template-columns:1fr 1fr}.foot-brand{grid-column:1/-1}}
@@ -700,7 +721,7 @@
         <a href="#/motiv" data-nav="motiv">MOTIV</a>
         <a href="#/wheelpros" data-nav="wheelpros">Wheel Pros</a>
         <a href="#/patterns" data-nav="patterns">Pattern Drawings</a>
-        <a class="nav-cta" href="mailto:jchung0510@gmail.com">Contact</a>
+        <a class="nav-cta" href="mailto:jchung0510@gmail.com" aria-label="Send an email to Jenny Chung at jchung0510@gmail.com">Contact</a>
       </nav>
     </header>
 
@@ -867,15 +888,16 @@
         <section class="band contact-band" aria-label="Contact">
           <div class="wrap">
             <div class="contact-grid">
-              <div class="rv">
+              <div>
                 <p class="kicker">Contact</p>
                 <h2>Work With Me</h2>
                 <p class="lede">Wheel design, pattern drawing and design patent artwork — I take on new programs directly. Write to me and I will answer myself.</p>
-                <a class="btn" href="mailto:jchung0510@gmail.com">Email Jenny Chung</a>
+                <a class="contact-email" href="mailto:jchung0510@gmail.com" aria-label="Send an email to Jenny Chung at jchung0510@gmail.com">jchung0510@gmail.com</a>
+                <a class="btn" href="mailto:jchung0510@gmail.com" aria-label="Send an email to Jenny Chung at jchung0510@gmail.com">Email Jenny Chung</a>
               </div>
-              <ul class="c-list rv">
+              <ul class="c-list">
                 <li><span class="k">Designer</span><span class="v">Jenny Chung</span></li>
-                <li><span class="k">Email</span><a href="mailto:jchung0510@gmail.com">jchung0510@gmail.com</a></li>
+                <li><span class="k">Email</span><a class="c-email" href="mailto:jchung0510@gmail.com" aria-label="Send an email to Jenny Chung at jchung0510@gmail.com">jchung0510@gmail.com</a></li>
                 <li><span class="k">Studio</span><span class="v">Corona, CA</span></li>
               </ul>
             </div>
@@ -933,7 +955,7 @@
             <h4>Contact</h4>
             <ul class="foot-contact">
               <li>Jenny Chung</li>
-              <li><a href="mailto:jchung0510@gmail.com">jchung0510@gmail.com</a></li>
+              <li><a href="mailto:jchung0510@gmail.com" aria-label="Send an email to Jenny Chung at jchung0510@gmail.com">jchung0510@gmail.com</a></li>
               <li>Corona, CA</li>
             </ul>
           </div>
