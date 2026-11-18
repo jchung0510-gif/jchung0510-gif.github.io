@@ -69,6 +69,13 @@
         transition:background .2s;
       }
       .nav-cta:hover{background:var(--brass-2)}
+      /* .nav-links a outranks .nav-cta on specificity, so the Contact label
+         rendered in the pale nav-link gray instead of black on the yellow
+         box. Pin it black at the winning specificity, in both nav layouts. */
+      .nav-links a.nav-cta,.nav-links button.nav-cta{color:#141310}
+      .nav-links a.nav-cta:hover,.nav-links button.nav-cta:hover{color:#141310;background:var(--brass-2)}
+      button.nav-cta{border:none}
+      button.btn{border:none}
       .nav-toggle{
         display:none;margin-left:auto;background:none;border:1px solid var(--line-2);color:var(--ink);
         width:44px;height:44px;align-items:center;justify-content:center;flex:none;
@@ -549,6 +556,38 @@
         padding:16px;border-radius:0;resize:vertical;
       }
 
+      /* ---------- email composer — opened by the nav Contact button ---------- */
+      .mailpanel{
+        position:fixed;inset:0;z-index:122;background:rgba(6,7,8,.88);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+        display:none;align-items:center;justify-content:center;padding:22px var(--pad);
+      }
+      .mailpanel.open{display:flex}
+      .mail-card{
+        background:var(--bg-2);border:1px solid var(--line-2);width:100%;max-width:560px;
+        max-height:calc(100vh - 44px);overflow-y:auto;padding:24px clamp(20px,4vw,32px) 28px;
+      }
+      .mail-head{display:flex;align-items:center;justify-content:space-between;gap:16px}
+      .mail-head h3{margin:0;font-size:24px;text-transform:uppercase;letter-spacing:.02em}
+      .mail-to{color:var(--ink-2);font-size:14.5px;margin:10px 0 2px}
+      .mail-to a{color:var(--brass-2);font-weight:700}
+      .mail-lab{display:block;font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--mut);margin:16px 0 6px}
+      .mail-in{
+        width:100%;background:var(--bg-3);border:1px solid var(--line-2);color:var(--ink);
+        font-family:inherit;font-size:16px;padding:12px 14px;border-radius:0;
+      }
+      .mail-in:focus{outline:2px solid var(--brass);outline-offset:1px;border-color:var(--brass)}
+      textarea.mail-in{resize:vertical;line-height:1.55}
+      .mail-actions{display:flex;gap:10px;flex-wrap:wrap;margin:22px 0 0}
+      .mail-send{
+        background:var(--yolk);border:1px solid var(--yolk);color:#111;
+        font-family:var(--mono);font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+        padding:0 18px;min-height:50px;
+      }
+      .mail-send.alt{background:none;color:var(--ink);border-color:var(--line-2)}
+      .mail-send.alt:hover{border-color:var(--brass);color:var(--brass-2)}
+      .mail-status{font-family:var(--mono);font-size:11.5px;letter-spacing:.06em;color:var(--brass-2);margin:12px 0 0;min-height:18px}
+      .mail-note{color:var(--mut);font-size:13px;font-weight:300;margin:10px 0 0}
+
       /* ---------- gallery — on trucks ---------- */
       .truck-sec{border-top:1px solid var(--line);padding:clamp(56px,7vw,96px) 0 clamp(64px,7vw,100px)}
       .truck-sec .sec-head h2{font-size:clamp(30px,4vw,52px);text-transform:uppercase}
@@ -721,7 +760,7 @@
         <a href="#/motiv" data-nav="motiv">MOTIV</a>
         <a href="#/wheelpros" data-nav="wheelpros">Wheel Pros</a>
         <a href="#/patterns" data-nav="patterns">Pattern Drawings</a>
-        <a class="nav-cta" href="mailto:jchung0510@gmail.com" aria-label="Send an email to Jenny Chung at jchung0510@gmail.com">Contact</a>
+        <button type="button" class="nav-cta" id="navContactBtn" aria-haspopup="dialog">Contact</button>
       </nav>
     </header>
 
@@ -893,7 +932,7 @@
                 <h2>Work With Me</h2>
                 <p class="lede">Wheel design, pattern drawing and design patent artwork — I take on new programs directly. Write to me and I will answer myself.</p>
                 <a class="contact-email" href="mailto:jchung0510@gmail.com" aria-label="Send an email to Jenny Chung at jchung0510@gmail.com">jchung0510@gmail.com</a>
-                <a class="btn" href="mailto:jchung0510@gmail.com" aria-label="Send an email to Jenny Chung at jchung0510@gmail.com">Email Jenny Chung</a>
+                <button type="button" class="btn js-mail-open">Email Jenny Chung</button>
               </div>
               <ul class="c-list">
                 <li><span class="k">Designer</span><span class="v">Jenny Chung</span></li>
@@ -984,6 +1023,33 @@
         <p class="sl-status" id="selListStatus" role="status"></p>
         <textarea class="sl-text" id="selListText" readonly rows="20" aria-label="Selection list as text"></textarea>
       </div></div>
+    </div>
+
+    <!-- ================= EMAIL COMPOSER ================= -->
+    <div class="mailpanel" id="mailPanel" role="dialog" aria-modal="true" aria-label="Send an email to Jenny Chung">
+      <div class="mail-card">
+        <div class="mail-head">
+          <h3>Send an Email</h3>
+          <button type="button" class="lb-x" id="mailClose" aria-label="Close email form">✕</button>
+        </div>
+        <p class="mail-to">To: <a href="mailto:jchung0510@gmail.com">jchung0510@gmail.com</a> — Jenny Chung</p>
+        <form id="mailForm" novalidate>
+          <label class="mail-lab" for="mailName">Your name</label>
+          <input class="mail-in" id="mailName" type="text" autocomplete="name" placeholder="Your name" />
+          <label class="mail-lab" for="mailFrom">Your email — so Jenny can reply</label>
+          <input class="mail-in" id="mailFrom" type="email" autocomplete="email" placeholder="you@example.com" />
+          <label class="mail-lab" for="mailSubject">Subject</label>
+          <input class="mail-in" id="mailSubject" type="text" value="Wheel design inquiry" />
+          <label class="mail-lab" for="mailBody">Message</label>
+          <textarea class="mail-in" id="mailBody" rows="6" placeholder="Hello Jenny, I am interested in…"></textarea>
+          <div class="mail-actions">
+            <button type="submit" class="mail-send" id="mailSendApp">Send with Mail App</button>
+            <button type="button" class="mail-send alt" id="mailSendGmail">Send with Gmail</button>
+          </div>
+          <p class="mail-status" id="mailStatus" role="status"></p>
+          <p class="mail-note">Write your message once, then pick a send button — it opens addressed to Jenny with the subject and message already filled in, ready to send.</p>
+        </form>
+      </div>
     </div>
 
     <!-- ================= LIGHTBOX ================= -->
@@ -3128,6 +3194,67 @@ window.WP_DATA = {"brands":[{"id":"asanti","code":"Asanti","name":"Black Label &
         revealTimer = setTimeout(function(){ revealAll(cur); }, 2200);
       }, 600);
       setTimeout(sweep, 250); setTimeout(sweep, 1000); setTimeout(sweep, 2500);
+    })();
+    </script>
+    <script>
+    /* ---------- email composer ----------
+       The nav Contact button used to be a bare mailto: link. Inside the
+       app's sandboxed webview a mailto: tap is swallowed — nothing opened
+       and nothing explained, which read as a dead button. The button now
+       opens this composer instead: the visitor writes once, then sends
+       either through their own mail app (a mailto: with the subject and
+       message already filled in) or through Gmail's compose window,
+       which works in any browser. The Contact section's Email button
+       opens the same composer. */
+    (function(){
+      var TO = "jchung0510@gmail.com";
+      var panel = document.getElementById("mailPanel");
+      if (!panel) return;
+      var status = document.getElementById("mailStatus");
+      function openPanel(){
+        panel.classList.add("open");
+        var links = document.getElementById("navLinks");
+        if (links) links.classList.remove("open");
+        var t = document.getElementById("navToggle");
+        if (t) t.setAttribute("aria-expanded", "false");
+        var n = document.getElementById("mailName");
+        if (n) setTimeout(function(){ n.focus(); }, 60);
+      }
+      function closePanel(){ panel.classList.remove("open"); }
+      function compose(){
+        var name = document.getElementById("mailName").value.trim();
+        var from = document.getElementById("mailFrom").value.trim();
+        var subj = document.getElementById("mailSubject").value.trim() || "Wheel design inquiry";
+        var body = document.getElementById("mailBody").value.trim();
+        if (name || from) body += "\n\n— " + name + (from ? (name ? " · " : "") + from : "");
+        return { subject: subj, body: body };
+      }
+      function sendMailApp(){
+        var c = compose();
+        var a = document.createElement("a");
+        a.href = "mailto:" + TO + "?subject=" + encodeURIComponent(c.subject) + "&body=" + encodeURIComponent(c.body);
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        status.textContent = "Your mail app should now open with the message ready — just press send there.";
+      }
+      function sendGmail(){
+        var c = compose();
+        var url = "https://mail.google.com/mail/?view=cm&fs=1&to=" + encodeURIComponent(TO)
+          + "&su=" + encodeURIComponent(c.subject) + "&body=" + encodeURIComponent(c.body);
+        window.open(url, "_blank", "noopener");
+        status.textContent = "Gmail should now open with the message ready — just press send there.";
+      }
+      var navBtn = document.getElementById("navContactBtn");
+      if (navBtn) navBtn.addEventListener("click", openPanel);
+      document.querySelectorAll(".js-mail-open").forEach(function(b){ b.addEventListener("click", openPanel); });
+      document.getElementById("mailClose").addEventListener("click", closePanel);
+      panel.addEventListener("click", function(e){ if (e.target === panel) closePanel(); });
+      document.addEventListener("keydown", function(e){
+        if (panel.classList.contains("open") && e.key === "Escape") closePanel();
+      });
+      document.getElementById("mailForm").addEventListener("submit", function(e){ e.preventDefault(); sendMailApp(); });
+      document.getElementById("mailSendGmail").addEventListener("click", sendGmail);
     })();
     </script>
     <script>
